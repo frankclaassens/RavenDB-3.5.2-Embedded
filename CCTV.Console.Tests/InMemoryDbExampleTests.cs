@@ -10,16 +10,18 @@ namespace CCTV.Console.Tests
     [TestFixture]
     public class InMemoryDbExampleTests : InMemoryRavenTestBase
     {   
-        [SetUp]
-        public void SetupTest()
+        [OneTimeSetUp]
+        public void SetUp()
         {
-
+            StartRavenStudio = false;
+            _seedTask.Wait();
         }
 
-        [TearDown]
-        public void TearDownTest()
+        [OneTimeTearDown]
+        public void TearDown()
         {
-
+            if (StartRavenStudio)
+                WaitForUserToContinueTheTest(debug: false, url: "http://localhost:8080/");
         }
 
         [Test]
@@ -49,8 +51,7 @@ namespace CCTV.Console.Tests
             {
                 emp = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, "Ancel");
             }
-
-            WaitForUserToContinueTheTest(debug: false, url: "http://localhost:8080/");
+            
             Assert.AreEqual(emp.FirstName, "Ancel");
         }
     }

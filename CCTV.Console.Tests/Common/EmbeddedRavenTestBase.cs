@@ -27,6 +27,12 @@ namespace CCTV.Console.Tests.Common
     {
         private static readonly string DataDirRoot = ConfigurationManager.AppSettings["EmbeddedRavenDbPath"];
 
+        private static bool _startRavenStudio;
+        protected bool StartRavenStudio
+        {
+            get { return _startRavenStudio; }
+            set { _startRavenStudio = value; }
+        }
         private static EmbeddableDocumentStore _store;
 
         protected static Task _seedTask;

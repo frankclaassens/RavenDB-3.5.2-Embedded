@@ -17,41 +17,19 @@ namespace CCTV.Console.Tests
 
     [TestFixture]
     public class EmbeddedDbExampleTests : EmbeddedRavenTestBase
-    {   
-        [SetUp]
-        public void SetupTest()
+    {
+        [OneTimeSetUp]
+        public void SetUp()
         {
-
+            StartRavenStudio = false;
+            _seedTask.Wait();
         }
 
-        [TearDown]
-        public void TearDownTest()
+        [OneTimeTearDown]
+        public void TearDown()
         {
-            //var emp = new Faker<Employee>()
-            //    .RuleFor(u => u.FirstName, f => "Frank")
-            //    .RuleFor(u => u.LastName, f => "Claassens")
-            //    .RuleFor(u => u.Email, (f, u) => "Frank.Claassens3@gmail.com")
-            //    .Generate();
-
-            //using (var session = Store.OpenSession())
-            //{
-            //    session.Store(emp);
-            //    session.SaveChanges();
-            //}
-
-            //emp = new Faker<Employee>()
-            //    .RuleFor(u => u.FirstName, f => "Frank")
-            //    .RuleFor(u => u.LastName, f => "Claassens")
-            //    .RuleFor(u => u.Email, (f, u) => "Frank.Claassens1@gmail.com")
-            //    .Generate();
-
-            //using (var session = Store.OpenSession())
-            //{
-            //    session.Store(emp);
-            //    session.SaveChanges();
-            //}
-
-            //Task.Run(() => BulkInsert(Store));
+            if (StartRavenStudio)
+                WaitForUserToContinueTheTest(debug: false, url: "http://localhost:8080/");
         }
 
         [Test]

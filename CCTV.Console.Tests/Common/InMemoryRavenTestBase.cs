@@ -28,9 +28,18 @@ namespace CCTV.Console.Tests.Common
 
         private static EmbeddableDocumentStore _store;
 
+        private static bool _startRavenStudio;
+
+        protected bool StartRavenStudio
+        {
+            get { return _startRavenStudio; }
+            set { _startRavenStudio = value; }
+        }
+
         protected static Task _seedTask;
 
         protected IDocumentStore Store => _store;
+
 
         public InMemoryRavenTestBase()
         {
@@ -41,7 +50,7 @@ namespace CCTV.Console.Tests.Common
             //Console.WriteLine("Async Task => Launch RavenDB Management Studio");
             //Task.Run(() => WaitForUserToContinueTheTest(false, "http://localhost:8080"));
 
-            TimeAndExecute("Seeding Database", GenerateSeedData);
+            _seedTask = Task.Run(() => TimeAndExecute("Seeding Database", GenerateSeedData));
 
             //WaitForIndexing(_store);
         }
