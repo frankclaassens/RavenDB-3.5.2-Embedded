@@ -9,7 +9,7 @@ namespace CCTV.RavenDB.Indexes
     using Raven.Abstractions.Indexing;
     using Raven.Client.Indexes;
 
-    public class AutoEmployeesByFirstName : AbstractIndexCreationTask
+    public class AutoEmployeesByFirstNameIndex : AbstractIndexCreationTask
     {
         public override string IndexName
         {
@@ -24,7 +24,11 @@ namespace CCTV.RavenDB.Indexes
             {
                 Map = @"from doc in docs.Employees
 select new {
-	FirstName = doc.FirstName
+	FirstName = doc.FirstName,
+    LastName = doc.LastName,
+    HomePhone = doc.HomePhone,
+    Birthday = doc.Birthday,
+    Notes = doc.Notes,
 }"
             };
         }

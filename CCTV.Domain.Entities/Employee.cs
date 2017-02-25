@@ -19,6 +19,7 @@ namespace CCTV.Domain.Entities
         public string Extension { get; set; }
         public string ReportsTo { get; set; }
         public List<string> Notes { get; set; }
+        public string Description { get; set; }
 
 
         public string Email { get; set; }

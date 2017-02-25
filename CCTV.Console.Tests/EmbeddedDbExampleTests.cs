@@ -1,4 +1,6 @@
-﻿namespace CCTV.Console.Tests
+﻿using CCTV.Console.Tests.Common;
+
+namespace CCTV.Console.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -14,7 +16,7 @@
     using Raven.Client.UniqueConstraints;
 
     [TestFixture]
-    public class EmbeddedDbExampleTests : CustomEmbeddedRavenTestBase
+    public class EmbeddedDbExampleTests : EmbeddedRavenTestBase
     {   
         [SetUp]
         public void SetupTest()
@@ -55,7 +57,9 @@
         [Test]
         public void TestMethod1()
         {
-            BulkInsert(Store);
+            //_seedTask.Wait();
+
+            //Thread.Sleep(1000);
 
             using (var session = Store.OpenSession())
             {
@@ -66,7 +70,7 @@
             {
                 var newEmployee = new Employee()
                 {
-                    FirstName = "Frank",
+                    FirstName = "Ancel",
                     LastName = "Claassens",
                     Email = "frank@gmail.com"
                 };
@@ -80,44 +84,8 @@
                 emp = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, "Ancel");
             }
 
-            WaitForUserToContinueTheTest(debug: true, url: "http://localhost:8080/");
+            //WaitForUserToContinueTheTest(debug: true, url: "http://localhost:8080/");
             Assert.AreEqual(emp.FirstName, "Ancel");
-        }
-
-        private static List<Employee> GenerateUsers()
-        {
-            var list = new Faker<Employee>()
-                .RuleFor(u => u.FirstName, f => f.Name.FirstName())
-                .RuleFor(u => u.LastName, f => f.Name.LastName())
-                .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
-                .Generate(10).ToList();
-
-
-            list.First().FirstName = "Ancel";
-            return list;
-        }
-
-        private static void BulkInsert(IDocumentStore store)
-        {
-            var list = GenerateUsers();
-            //var watch = Stopwatch.StartNew();
-            //watch.Start();
-            //Debug.Flush();
-            //Debug.WriteLine("INSERT START 100,000 users");
-
-            using (var session = store.OpenSession())
-            {
-                list.ForEach(x => session.Store(x));  
-                session.SaveChanges();              
-            }
-
-            //using (BulkInsertOperation bulkInsert = store.BulkInsert())
-            //{
-            //    list.ForEach(x => bulkInsert.Store(x));
-            //}
-            //watch.Stop();
-            //Debug.WriteLine("INSERT END \n TIME ELAPSED {0}", watch.Elapsed);
         }
     }
 }

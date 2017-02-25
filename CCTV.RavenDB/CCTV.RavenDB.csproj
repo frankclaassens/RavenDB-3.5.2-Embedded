@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentStoreService.cs" />
-    <Compile Include="Indexes\AutoEmployeesByFirstName.cs" />
+    <Compile Include="Indexes\AutoEmployeesByFirstNameIndex.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
