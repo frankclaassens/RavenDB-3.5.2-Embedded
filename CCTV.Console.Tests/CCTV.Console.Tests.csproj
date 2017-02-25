@@ -118,8 +118,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CustomRavenTestBase.cs" />
-    <Compile Include="EmployeeTests.cs" />
+    <Compile Include="CustomInMemoryRavenTestBase.cs" />
+    <Compile Include="CustomEmbeddedRavenTestBase.cs" />
+    <Compile Include="EmbeddedDbExampleTests.cs" />
+    <Compile Include="InMemoryDbExampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

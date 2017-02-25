@@ -14,7 +14,7 @@
     using Raven.Client.UniqueConstraints;
 
     [TestFixture]
-    public class EmployeeTests : CustomRavenTestBase
+    public class EmbeddedDbExampleTests : CustomEmbeddedRavenTestBase
     {   
         [SetUp]
         public void SetupTest()
@@ -82,18 +82,6 @@
 
             WaitForUserToContinueTheTest(debug: true, url: "http://localhost:8080/");
             Assert.AreEqual(emp.FirstName, "Ancel");
-        }
-
-        [Test]
-        public void TestMethod2()
-        {
-            Assert.AreEqual(1, 1);
-        }
-
-        [Test]
-        public void TestMethod3()
-        {
-            Assert.AreEqual(1, 1);
         }
 
         private static List<Employee> GenerateUsers()

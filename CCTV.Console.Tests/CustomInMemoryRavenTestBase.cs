@@ -21,7 +21,7 @@ namespace CCTV.Console.Tests
     using Raven.Tests.Helpers;
     using RavenDB.Indexes;
 
-    public class CustomRavenTestBase : RavenTestBase
+    public class CustomInMemoryRavenTestBase : RavenTestBase
     {
         private static readonly string DataDirRoot = ConfigurationManager.AppSettings["EmbeddedRavenDbPath"];
 
@@ -31,7 +31,7 @@ namespace CCTV.Console.Tests
 
         protected IDocumentStore Store => _store;
 
-        public CustomRavenTestBase()
+        public CustomInMemoryRavenTestBase()
         {
             _store = CreateStore();
             _store.Initialize();
