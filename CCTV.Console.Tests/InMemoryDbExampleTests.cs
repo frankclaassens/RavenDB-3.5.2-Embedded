@@ -1,12 +1,10 @@
 ﻿using CCTV.Console.Tests.Common;
+using CCTV.Entities;
+using NUnit.Framework;
+using Raven.Client.UniqueConstraints;
 
 namespace CCTV.Console.Tests
 {
-    using System;
-    using CCTV.Domain.Entities;
-    using NUnit.Framework;
-    using Raven.Client.UniqueConstraints;
-
     [TestFixture]
     public class InMemoryDbExampleTests : InMemoryRavenTestBase
     {   

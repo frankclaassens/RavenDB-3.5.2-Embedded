@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CCTV.RavenDB.Indexes
+﻿namespace CCTV.RavenDB.Indexes
 {
     using Raven.Abstractions.Indexing;
     using Raven.Client.Indexes;

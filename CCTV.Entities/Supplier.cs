@@ -1,4 +1,4 @@
-﻿namespace CCTV.Domain.Entities
+﻿namespace CCTV.Entities
 {
     public class Supplier
     {

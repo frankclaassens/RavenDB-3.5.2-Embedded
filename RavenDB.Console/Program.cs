@@ -1,4 +1,6 @@
-﻿namespace RavenDB.Console.App
+﻿using CCTV.Entities;
+
+namespace RavenDB.Console.App
 {
     using System.Diagnostics;
     using CCTV.RavenDB;
@@ -6,11 +8,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Bogus;
-    using CCTV.Domain.Entities;
-    using Raven.Abstractions.Extensions;
     using Raven.Client;
     using Raven.Client.Document;
-    using Raven.Client.Indexes;
     using Raven.Client.Linq;
     using Raven.Client.UniqueConstraints;
 

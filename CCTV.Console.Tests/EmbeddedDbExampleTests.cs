@@ -1,20 +1,10 @@
 ﻿using CCTV.Console.Tests.Common;
+using CCTV.Entities;
+using NUnit.Framework;
+using Raven.Client.UniqueConstraints;
 
 namespace CCTV.Console.Tests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Bogus;
-    using Domain.Entities;
-    using NUnit.Framework;
-    using Raven.Client;
-    using Raven.Client.Document;
-    using Raven.Client.UniqueConstraints;
-
     [TestFixture]
     public class EmbeddedDbExampleTests : EmbeddedRavenTestBase
     {
@@ -22,34 +12,30 @@ namespace CCTV.Console.Tests
         public void SetUp()
         {
             StartRavenStudio = false;
-            _seedTask.Wait();
+            //_seedTask.Wait();
         }
 
         [OneTimeTearDown]
         public void TearDown()
         {
             if (StartRavenStudio)
-                WaitForUserToContinueTheTest(debug: false, url: "http://localhost:8080/");
+                WaitForUserToContinueTheTest(debug: true, url: "http://localhost:8080/");
         }
 
         [Test]
         public void TestMethod1()
         {
-            //_seedTask.Wait();
-
-            //Thread.Sleep(1000);
-
             using (var session = Store.OpenSession())
             {
-                var results = session.Load<Employee>(1);               
+                var results = session.Load<Employee>(1);
             }
 
             using (var session = Store.OpenSession())
             {
                 var newEmployee = new Employee()
                 {
-                    FirstName = "Ancel",
-                    LastName = "Claassens",
+                    FirstName = "Frank",
+                    LastName = "Ancel",
                     Email = "frank@gmail.com"
                 };
                 session.Store(newEmployee);
@@ -59,11 +45,16 @@ namespace CCTV.Console.Tests
             Employee emp;
             using (var session = Store.OpenSession())
             {
-                emp = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, "Ancel");
+                emp = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, "Frank");
             }
 
-            //WaitForUserToContinueTheTest(debug: true, url: "http://localhost:8080/");
-            Assert.AreEqual(emp.FirstName, "Ancel");
+            Employee[] empList;
+            using (var session = Store.OpenSession())
+            {
+                empList = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, new string[] { "Frank", "Name 0", "Name 1"} );
+            }
+
+            Assert.AreEqual(emp.FirstName, "Frank");
         }
     }
 }

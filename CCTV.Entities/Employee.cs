@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Raven.Client.UniqueConstraints;
-
-namespace CCTV.Domain.Entities
+﻿namespace CCTV.Entities
 {
+    using System;
+    using System.Collections.Generic;
+
+    using Raven.Client.UniqueConstraints;
+
     public class Employee
     {
         public string Id { get; set; }
@@ -11,6 +12,7 @@ namespace CCTV.Domain.Entities
 
         [UniqueConstraint]
         public string FirstName { get; set; }
+
         public string Title { get; set; }
         public Address Address { get; set; }
         public DateTime HiredAt { get; set; }

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bogus;
-using CCTV.Domain.Entities;
+using CCTV.Entities;
 using CCTV.RavenDB.Indexes;
 using NUnit.Framework;
 using Raven.Abstractions.Extensions;
@@ -47,7 +47,7 @@ namespace CCTV.Console.Tests.Common
             //Task.Run(() => WaitForUserToContinueTheTest(true, "http://localhost:8080"));
 
             //_seedTask = Task.Run(() => GenerateSeedData());
-            TimeAndExecute("Seeding Database", GenerateSeedData);
+            TimeAndExecute("Seeding Databases", GenerateSeedData);
             //Task.Run(() => GenerateSeedData());
 
 
@@ -105,7 +105,7 @@ namespace CCTV.Console.Tests.Common
              .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
              .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(5000))
              .RuleFor(u => u.Birthday, (f, u) => f.Date.Past())
-             .Generate(5000).ToArray();
+             .Generate(100).ToArray();
 
             using (var session = Store.OpenSession())
             {

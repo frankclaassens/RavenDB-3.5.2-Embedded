@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CCTV.Domain.Entities
+﻿namespace CCTV.Entities
 {
     public class Address
     {

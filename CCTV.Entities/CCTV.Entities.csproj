@@ -7,8 +7,8 @@
     <ProjectGuid>{D3587CE5-EE5A-4AFF-A6A7-49D992BBB5D8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CCTV.Domain.Entities</RootNamespace>
-    <AssemblyName>CCTV.Domain.Entities</AssemblyName>
+    <RootNamespace>CCTV.Entities</RootNamespace>
+    <AssemblyName>CCTV.Entities</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Raven.Client.UniqueConstraints, Version=3.5.2.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
-      <HintPath>..\packages\RavenDB.Client.UniqueConstraints.3.5.2\lib\net45\Raven.Client.UniqueConstraints.dll</HintPath>
+    <Reference Include="Raven.Client.UniqueConstraints, Version=3.5.3.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <HintPath>..\packages\RavenDB.Client.UniqueConstraints.3.5.3\lib\net45\Raven.Client.UniqueConstraints.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
