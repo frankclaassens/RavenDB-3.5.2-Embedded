@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Raven.Client;
 using Raven.Client.Document;
 
@@ -12,6 +8,8 @@ namespace CCTV.RavenDB
 
     public static class DocumentStoreService
     {
+        private const string ConnectionString = "http://localhost:8079";
+
         private static readonly Lazy<IDocumentStore> _store = new Lazy<IDocumentStore>(CreateStore);
 
         public static IDocumentStore Store => _store.Value;
@@ -20,8 +18,7 @@ namespace CCTV.RavenDB
         {
             var store = new DocumentStore()
             {
-                Url = "http://localhost:80",
-                DefaultDatabase = "Northwind"
+                Url = ConnectionString,
             };
 
             store.RegisterListener(new UniqueConstraintsStoreListener());

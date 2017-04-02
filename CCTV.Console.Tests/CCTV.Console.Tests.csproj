@@ -116,10 +116,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="Common\InMemoryRavenTestBase.cs" />
     <Compile Include="Common\EmbeddedRavenTestBase.cs" />
     <Compile Include="EmbeddedDbExampleTests.cs" />
-    <Compile Include="InMemoryDbExampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -140,11 +138,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Plugins\Raven.Bundles.UniqueConstraints.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

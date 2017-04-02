@@ -25,49 +25,42 @@ namespace CCTV.Console.Tests.Common
 {
     public class EmbeddedRavenTestBase : RavenTestBase
     {
-        private static readonly string DataDirRoot = ConfigurationManager.AppSettings["EmbeddedRavenDbPath"];
+        private static string _ravenDataDirRoot;
 
-        private static bool _startRavenStudio;
-        protected bool StartRavenStudio
-        {
-            get { return _startRavenStudio; }
-            set { _startRavenStudio = value; }
-        }
         private static EmbeddableDocumentStore _store;
-
-        protected static Task _seedTask;
 
         protected IDocumentStore Store => _store;
 
-        public EmbeddedRavenTestBase()
+        protected EmbeddedRavenTestBase()
         {
-            TimeAndExecute("Creating Raven Store", () => _store = CreateStore());
+            // Create an unique folder name for each new database
+            _ravenDataDirRoot = Path.Combine(ConfigurationManager.AppSettings["EmbeddedRavenPath"], Guid.NewGuid().ToString());
 
-            Task.Run(() => CreateDocumentStoreIndexes());
-            //Task.Run(() => WaitForUserToContinueTheTest(true, "http://localhost:8080"));
+            _store = CreateStore();
 
-            //_seedTask = Task.Run(() => GenerateSeedData());
-            TimeAndExecute("Seeding Databases", GenerateSeedData);
-            //Task.Run(() => GenerateSeedData());
+            CreateDocumentStoreIndexes();
 
+            GenerateSeedData();
+        }
 
-            //_initialiseStoreTask = Task.Run(() => CreateDocumentStoreIndexes());
+        protected void LaunchRavenStudioGui(bool pauseExecution = false)
+        {
+            var ravenStudioTask = Task.Run(() => WaitForUserToContinueTheTest(false, "http://localhost:8079"));
 
-            //WaitForIndexing(_store);
-
+            if (pauseExecution)
+                ravenStudioTask.Wait();
         }
 
         private EmbeddableDocumentStore CreateStore()
         {
-            NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(8080);
+            NonAdminHttp.EnsureCanListenToWhenInNonAdminContext(8079);
 
             _store = _store = NewDocumentStore(
                 false,
-                dataDir: DataDirRoot,
-                port: 8080,
+                dataDir: _ravenDataDirRoot,
+                port: 8079,
                 requestedStorage: "esent",
-                activeBundles: "Unique Constraints;PeriodicExport;DocumentExpiration",
-                catalog: new AggregateCatalog(new AssemblyCatalog(typeof(UniqueConstraintsPutTrigger).Assembly)),
+                activeBundles: "Unique Constraints",
                 enableAuthentication: false,
                 configureStore: ConfigureStore
             );
@@ -79,13 +72,11 @@ namespace CCTV.Console.Tests.Common
         {
             store.UseEmbeddedHttpServer = true;
 
-            store.DataDirectory = Path.Combine(DataDirRoot, Guid.NewGuid().ToString());
-            store.Configuration.PluginsDirectory = @"~\Plugins";
-            store.Configuration.CreatePluginsDirectoryIfNotExisting = true;
-            store.Configuration.AllowLocalAccessWithoutAuthorization = true;
-            store.Configuration.AnonymousUserAccessMode = AnonymousUserAccessMode.Admin;
+            store.DataDirectory = _ravenDataDirRoot;
+            store.Configuration.PluginsDirectory = ConfigurePlugins();
+            store.Configuration.CompiledIndexCacheDirectory = Path.Combine(_ravenDataDirRoot, "CompiledIndexCache");
             store.Configuration.AccessControlAllowOrigin = new HashSet<string>() { "*" };
-            //store.Configuration.NewIndexInMemoryMaxBytes = 1073741824;
+
             store.Conventions = new DocumentConvention()
             {
                 DisableProfiling = true,
@@ -96,26 +87,45 @@ namespace CCTV.Console.Tests.Common
             store.RegisterListener(new UniqueConstraintsStoreListener());
         }
 
+        private string ConfigurePlugins()
+        {
+            // Make sure Plugins folder exist and contains all bundle assemblies that are required by the embedded raven db.
+            var outputDir = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+            var pluginDir = Path.Combine(outputDir, @"Plugins");
+
+            if (!Directory.Exists(pluginDir)) Directory.CreateDirectory(pluginDir);
+
+            var di = new DirectoryInfo(outputDir);
+            var ravenBundles = di.GetFiles("Raven.Bundles.*.dll");
+            foreach (var bundleFile in ravenBundles)
+            {
+                var destFile = Path.Combine(pluginDir, bundleFile.Name);
+                // If bundle file does not exist in Plugin folder, copy it.
+                if (!File.Exists(destFile))
+                    File.Copy(bundleFile.FullName, destFile, true);
+
+                // If bundle file exists, only copy if assembly version is newer
+                if (FileVersionInfo.GetVersionInfo(bundleFile.FullName).FileBuildPart > FileVersionInfo.GetVersionInfo(destFile).FileBuildPart)
+                    File.Copy(bundleFile.FullName, destFile, true);
+
+            }
+
+            return pluginDir;
+        }
+
         private void GenerateSeedData()
         {
             var employees = new Faker<Employee>()
              .RuleFor(u => u.FirstName, f => $"Name {f.UniqueIndex}")
              .RuleFor(u => u.LastName, f => f.Name.LastName())
              .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-             .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
-             .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(5000))
-             .RuleFor(u => u.Birthday, (f, u) => f.Date.Past())
+             .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(50))
              .Generate(100).ToArray();
 
             using (var session = Store.OpenSession())
             {
-                employees.ForEach(e=> session.Store(e));
+                employees.ForEach(e => session.Store(e));
                 session.SaveChanges();
-                //foreach (var employee in employees)
-                //{
-                //    session.Store(employee);
-                //    session.SaveChanges();
-                //}                
             }
         }
 

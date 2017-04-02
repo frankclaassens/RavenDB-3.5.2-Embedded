@@ -1,4 +1,5 @@
 ﻿using CCTV.Entities;
+using Raven.Abstractions.Extensions;
 
 namespace RavenDB.Console.App
 {
@@ -15,31 +16,42 @@ namespace RavenDB.Console.App
 
     internal class Program
     {
+        private static IDocumentStore _store;
+
         private static void Main(string[] args)
         {
-            ProcessStartInfo procInfo = new ProcessStartInfo();
-            procInfo.WindowStyle = ProcessWindowStyle.Normal;
+            _store = DocumentStoreService.Store; // Connectionstring: "http://localhost:8079"
 
-            var store = DocumentStoreService.Store;
+            Console.WriteLine("LOADING ALL EMPLOYEES");
+            var employees = LoadAllEmployees();
+            employees.ForEach(x => Console.WriteLine(x.FirstName + " " + x.LastName));
 
             //InsertEmployee();
 
-            //BulkInsert(store);
+            // BulkInsert(store);
 
-            LoadUniqueCon();
-            QueryIndexByName();
-
+            LoadUniqueConstraint();
+            //QueryIndexByName();
+            Console.ReadLine();
         }
 
-        private static void LoadUniqueCon()
+        private static IEnumerable<Employee> LoadAllEmployees()
         {
-
-            using (var session = DocumentStoreService.Store.OpenSession())
+            using (var session = _store.OpenSession())
             {
-                var existingUser = session
-               .LoadByUniqueConstraint<Employee>(x => x.Email, "Frank@mail.com");
+                var result = session.Query<Employee>().ProjectFromIndexFieldsInto<Employee>().Take(10).ToList();
+                return result;
             }
-               
+        }
+
+        private static void LoadUniqueConstraint()
+        {
+            Console.WriteLine("LOADING UNIQUE CONSTRAINT");
+            using (var session = _store.OpenSession())
+            {
+                var existingUser = session.LoadByUniqueConstraint<Employee>(x => x.FirstName, "Name 0");
+                Console.WriteLine("CONSTRAINT LOADED: " + existingUser.LastName);
+            }
         }
 
         private static void InsertEmployee()
@@ -82,7 +94,7 @@ namespace RavenDB.Console.App
                 .RuleFor(u => u.FirstName, f => f.Name.FirstName())
                 .RuleFor(u => u.LastName, f => f.Name.LastName())
                 .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-                .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
+                //.RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
                 .Generate(100).ToList();
 
             return list;

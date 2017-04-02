@@ -24,7 +24,7 @@ namespace CCTV.Console.Tests.Common
 {
     public class InMemoryRavenTestBase : RavenTestBase
     {
-        private static readonly string DataDirRoot = ConfigurationManager.AppSettings["EmbeddedRavenDbPath"];
+        private static readonly string DataDirRoot = ConfigurationManager.AppSettings["EmbeddedRavenPath"];
 
         private static EmbeddableDocumentStore _store;
 
@@ -104,9 +104,8 @@ namespace CCTV.Console.Tests.Common
              .RuleFor(u => u.FirstName, f => $"Name {f.UniqueIndex}")
              .RuleFor(u => u.LastName, f => f.Name.LastName())
              .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
-             .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
+            // .RuleFor(u => u.HomePhone, (f, u) => f.Phone.PhoneNumber())
              .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(5000))
-             .RuleFor(u => u.Birthday, (f, u) => f.Date.Past())
              .Generate(20000).ToArray();
 
             using (var session = Store.OpenSession())
