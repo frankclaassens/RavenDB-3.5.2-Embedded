@@ -116,6 +116,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="AdhocTests.cs" />
     <Compile Include="Common\EmbeddedRavenTestBase.cs" />
     <Compile Include="EmbeddedDbExampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

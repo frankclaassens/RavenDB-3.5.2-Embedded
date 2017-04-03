@@ -47,7 +47,7 @@ namespace CCTV.Console.Tests.Common
             // CreateDatabaseResource("StudioHub");
 
             CreateDocumentStoreIndexes();
-            GenerateSeedData();
+            //GenerateSeedData();
 
             //TestContext.WriteLine("BACKUP STARTED");
             //var task = BackupDatabaseAsync();
@@ -189,12 +189,21 @@ namespace CCTV.Console.Tests.Common
 
         private void GenerateSeedData()
         {
+            var randomTitles = new List<string>();
+            randomTitles.Add("Deal With Options");
+            randomTitles.Add("Deal");
+            randomTitles.Add("No Deals");
+            randomTitles.Add("Nothing Really Options");
+            randomTitles.Add("Something Cool");
+
             var employees = new Faker<Employee>()
              .RuleFor(u => u.FirstName, f => $"Name {f.UniqueIndex}")
              .RuleFor(u => u.LastName, f => f.Name.LastName())
              .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
              .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(50))
-             .Generate(5000).ToArray();
+             .RuleFor(u => u.EmployeeGroup, (f, u) => f.Random.Number(1,2))
+             .RuleFor(u => u.Title, (f, u) => f.PickRandom(randomTitles))
+             .Generate(30).ToArray();
 
             using (var session = Store.OpenSession())
             {

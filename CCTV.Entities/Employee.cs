@@ -16,6 +16,9 @@ namespace CCTV.Entities
         //public List<string> Notes { get; set; }
         public string Description { get; set; }
         public string Email { get; set; }
+        public int EmployeeGroup { get; set; }
+
+        public string Title { get; set; }
         //public List<string> Territories { get; set; }
     }
 }
