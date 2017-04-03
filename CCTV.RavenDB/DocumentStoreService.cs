@@ -19,6 +19,7 @@ namespace CCTV.RavenDB
             var store = new DocumentStore()
             {
                 Url = ConnectionString,
+                DefaultDatabase = "StudioHub"
             };
 
             store.RegisterListener(new UniqueConstraintsStoreListener());

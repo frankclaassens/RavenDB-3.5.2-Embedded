@@ -22,7 +22,7 @@ namespace CCTV.Console.Tests
         public void TearDown()
         {
             if (_openRavenGuiOnTearDown)
-                LaunchRavenStudioGui(true);
+                LaunchRavenStudioGui();
         }
 
         [Test]
