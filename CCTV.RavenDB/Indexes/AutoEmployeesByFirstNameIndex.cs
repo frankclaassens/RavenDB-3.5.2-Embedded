@@ -1,7 +1,8 @@
-﻿namespace CCTV.RavenDB.Indexes
+﻿using Raven.Abstractions.Indexing;
+
+namespace CCTV.RavenDB.Indexes
 {
     using CCTV.Entities;
-    using Raven.Abstractions.Indexing;
     using Raven.Client.Indexes;
     using System.Linq;
 
@@ -19,6 +20,7 @@
             });
 
             Index(x => x.Query, FieldIndexing.Analyzed);
+            Analyzers.Add(x => x.Query, "Raven.Database.Indexing.LowerCaseWhitespaceAnalyzer");
         }
 
         public class Definition
