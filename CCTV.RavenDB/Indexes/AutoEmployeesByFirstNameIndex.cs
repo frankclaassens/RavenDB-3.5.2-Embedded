@@ -1,30 +1,65 @@
 ﻿namespace CCTV.RavenDB.Indexes
 {
+    using CCTV.Entities;
     using Raven.Abstractions.Indexing;
     using Raven.Client.Indexes;
+    using System.Linq;
 
-    public class AutoEmployeesByFirstNameIndex : AbstractIndexCreationTask
+    public class EmployeesByFirstNameIndex : AbstractIndexCreationTask<Employee, EmployeesByFirstNameIndex.Definition>
     {
-        public override string IndexName
+        public EmployeesByFirstNameIndex()
         {
-            get
+            Map = docs => docs.Select(x => new
             {
-                return "Auto/Employees/ByFirstName";
-            }
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                EmployeeGroup = x.EmployeeGroup,
+                Title = x.Title,
+                Query = new object[] { x.Title.Replace("-", " ").Replace("(", " ").Replace(")", " "), x.Title, x.FirstName, x.LastName }
+            });
+
+            Index(x => x.Query, FieldIndexing.Analyzed);
         }
-        public override IndexDefinition CreateIndexDefinition()
+
+        public class Definition
         {
-            return new IndexDefinition
-            {
-                Map = @"from doc in docs.Employees
-select new {
-	FirstName = doc.FirstName,
-    LastName = doc.LastName,
-    HomePhone = doc.HomePhone,
-    Birthday = doc.Birthday,
-    Notes = doc.Notes,
-}"
-            };
+            public string Query { get; set; }
+
+            public string FirstName { get; set; }
+
+            public string LastName { get; set; }
+
+            public int EmployeeGroup { get; set; }
+
+            public string Title { get; set; }
         }
     }
+
+    //public class EmployeesByFirstNameIndex : AbstractIndexCreationTask
+    //{
+    //    public override string IndexName
+    //    {
+    //        get
+    //        {
+    //            return "Employees/ByFirstName";
+    //        }
+    //    }
+    //    public override IndexDefinition CreateIndexDefinition()
+    //    {
+    //        return new IndexDefinition
+    //        {
+    //            Map = @"from doc in docs.Employees
+    //                    select new {
+    //                     FirstName = doc.FirstName,
+    //                        LastName = doc.LastName,
+    //                        HomePhone = doc.HomePhone,
+    //                        Birthday = doc.Birthday,
+    //                        Notes = doc.Notes,
+    //                        Title = doc.Title
+    //                    }"
+    //        };
+
+    //        Index(x => x.Query, FieldIndexing.Analyzed);
+    //    }
+    //}
 }

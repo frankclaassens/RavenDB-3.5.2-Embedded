@@ -47,6 +47,7 @@ namespace CCTV.Console.Tests.Common
             // CreateDatabaseResource("StudioHub");
 
             CreateDocumentStoreIndexes();
+
             //GenerateSeedData();
 
             //TestContext.WriteLine("BACKUP STARTED");
@@ -214,7 +215,7 @@ namespace CCTV.Console.Tests.Common
 
         private static void CreateDocumentStoreIndexes()
         {
-            IndexCreation.CreateIndexes(typeof(AutoEmployeesByFirstNameIndex).Assembly, _store);
+            IndexCreation.CreateIndexes(typeof(EmployeesByFirstNameIndex).Assembly, _store);
         }
 
         private void TimeAndExecute(string message, Action task)

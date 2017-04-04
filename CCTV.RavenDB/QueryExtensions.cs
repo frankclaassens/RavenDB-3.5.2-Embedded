@@ -25,17 +25,17 @@
             return result;
         }
         
-        public static IDocumentQuery<T> QueryMultipleWords<T>(this IDocumentQuery<T> query, string fieldName, string queryString)
-        {
-            if (string.IsNullOrWhiteSpace(queryString))
-            {
-                return query;
-            }
+        //public static IDocumentQuery<T> QueryMultipleWords<T>(this IDocumentQuery<T> query, string fieldName, string queryString)
+        //{
+        //    if (string.IsNullOrWhiteSpace(queryString))
+        //    {
+        //        return query;
+        //    }
 
-            queryString = queryString.Trim().Replace(" ", "* AND ").Replace(",", "* AND ");
-            if (!queryString.EndsWith("*")) queryString = queryString + "*";
+        //    queryString = queryString.Trim().Replace(" ", "* AND ").Replace(",", "* AND ");
+        //    if (!queryString.EndsWith("*")) queryString = queryString + "*";
 
-            return query.Search(fieldName, queryString, escapeQueryOptions: EscapeQueryOptions.AllowPostfixWildcard);
-        }        
+        //    return query.Search(fieldName, queryString, escapeQueryOptions: EscapeQueryOptions.AllowPostfixWildcard);
+        //}        
     }
 }
