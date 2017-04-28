@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CCTV.Console.Tests.Common;
 using CCTV.Entities;
 using CCTV.RavenDB;
@@ -12,6 +13,8 @@ namespace CCTV.Console.Tests
     public class EmbeddedDbExampleTests : EmbeddedRavenTestBase
     {
         private bool _openRavenGuiOnTearDown = false;
+        private bool _pauseRavenGui = true;
+
         [OneTimeSetUp]
         public void SetUp()
         {
@@ -22,7 +25,20 @@ namespace CCTV.Console.Tests
         public void TearDown()
         {
             if (_openRavenGuiOnTearDown)
-                LaunchRavenStudioGui();
+            {
+                var studioTask = LaunchRavenStudioGui();
+                if (_pauseRavenGui)
+                    studioTask.Wait();
+            }
+
+            try
+            {
+                Store.Dispose();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         [Test]

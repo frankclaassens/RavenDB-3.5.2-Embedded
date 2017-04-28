@@ -15,7 +15,7 @@ namespace CCTV.Console.Tests
     [TestFixture]
     public class AdhocTests : EmbeddedRavenTestBase
     {
-        private bool _openRavenGuiOnTearDown = true;
+        private bool _openRavenGuiOnTearDown = false;
         private bool _pauseRavenGui = true;
 
         [OneTimeSetUp]
@@ -53,6 +53,15 @@ namespace CCTV.Console.Tests
                 var studioTask = LaunchRavenStudioGui();
                 if (_pauseRavenGui)
                     studioTask.Wait();
+            }
+
+            try
+            {
+                Store.Dispose();
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 

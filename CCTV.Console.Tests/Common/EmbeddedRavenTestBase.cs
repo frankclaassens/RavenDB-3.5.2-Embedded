@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Bogus;
 using CCTV.Entities;
@@ -18,10 +17,8 @@ using Raven.Bundles.UniqueConstraints;
 using Raven.Client;
 using Raven.Client.Document;
 using Raven.Client.Embedded;
-using Raven.Client.Extensions;
 using Raven.Client.Indexes;
 using Raven.Client.UniqueConstraints;
-using Raven.Database;
 using Raven.Database.Server;
 using Raven.Tests.Helpers;
 
@@ -33,7 +30,7 @@ namespace CCTV.Console.Tests.Common
 
         private string EmbeddedDatabasePath => Path.Combine(ConfigurationManager.AppSettings["EmbeddedRavenPath"], DatabaseGuid);
 
-        private bool createSeededTestDatabase = true;
+        private bool createSeededTestDatabase = false; // SET TO TRUE IF YOU WANT TO TEST DB BACKUP/RESTORE TESTS. OTHERWISE FALSE
 
         private static EmbeddableDocumentStore _store;
 
@@ -48,7 +45,7 @@ namespace CCTV.Console.Tests.Common
 
             CreateDocumentStoreIndexes();
 
-            //GenerateSeedData();
+            GenerateSeedData();
 
             //TestContext.WriteLine("BACKUP STARTED");
             //var task = BackupDatabaseAsync();
@@ -119,41 +116,7 @@ namespace CCTV.Console.Tests.Common
 
                 store.RegisterListener(new UniqueConstraintsStoreListener());
             }
-            //store.UseEmbeddedHttpServer = true;
-
-            //store.Configuration.RunInUnreliableYetFastModeThatIsNotSuitableForProduction = false;
-
-            //store.DataDirectory = Path.Combine(EmbeddedDatabasePath, @"Databases\System");
-            //store.Configuration.PluginsDirectory = ConfigurePlugins();
-            //store.Configuration.CompiledIndexCacheDirectory = Path.Combine(EmbeddedDatabasePath, "CompiledIndexCache");
-            //store.Configuration.AccessControlAllowOrigin = new HashSet<string>() { "*" };
-
-            //store.Conventions = new DocumentConvention()
-            //{
-            //    DisableProfiling = true,
-            //    MaxNumberOfRequestsPerSession = 30,
-            //    DefaultQueryingConsistency = ConsistencyOptions.None
-            //};
-
-            //store.RegisterListener(new UniqueConstraintsStoreListener());
         }
-
-        //private void CreateDatabaseResource(string databaseName)
-        //{
-        //    _store.DefaultDatabase = databaseName;
-        //    _store
-        //        .DatabaseCommands
-        //        .GlobalAdmin
-        //        .CreateDatabase(new DatabaseDocument()
-        //        {
-        //            Id = databaseName,
-        //            Settings =
-        //            {
-        //                {"Raven/ActiveBundles", "Unique Constraints"},
-        //                {"Raven/DataDir", Path.Combine(EmbeddedDatabasePath, $@"Databases\{databaseName}")}
-        //            }
-        //        });
-        //}
 
         protected async Task LaunchRavenStudioGui()
         {
@@ -204,7 +167,7 @@ namespace CCTV.Console.Tests.Common
              .RuleFor(u => u.Description, (f, u) => f.Random.AlphaNumeric(50))
              .RuleFor(u => u.EmployeeGroup, (f, u) => f.Random.Number(1,2))
              .RuleFor(u => u.Title, (f, u) => f.PickRandom(randomTitles))
-             .Generate(30).ToArray();
+             .Generate(100).ToArray();
 
             using (var session = Store.OpenSession())
             {

@@ -17,6 +17,7 @@ namespace CCTV.Console.Tests
     {
         private bool _openRavenGuiOnTearDown = true;
         private bool _pauseRavenGui = true;
+
         [OneTimeSetUp]
         public void SetUp()
         {
@@ -38,9 +39,9 @@ namespace CCTV.Console.Tests
                 Store.Dispose();
                 ClearDatabaseBackupFolder();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
+                // ignored
             }
         }
 
