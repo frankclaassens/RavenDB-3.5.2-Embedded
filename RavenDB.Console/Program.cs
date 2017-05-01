@@ -1,4 +1,6 @@
 ﻿using CCTV.Entities;
+using CCTV.Entities.Users;
+using CCTV.RavenDB.Indexes;
 using Raven.Abstractions.Extensions;
 
 namespace RavenDB.Console.App
@@ -20,11 +22,16 @@ namespace RavenDB.Console.App
 
         private static void Main(string[] args)
         {
-            _store = DocumentStoreService.Store; // Connectionstring: "http://localhost:8079"
+            _store = DocumentStoreService.Store; // NOTE: Change Connectionstring property in DocumentStoreService class.
 
             Console.WriteLine("LOADING ALL EMPLOYEES");
             var employees = LoadAllEmployees();
             employees.ForEach(x => Console.WriteLine(x.FirstName + " " + x.LastName));
+
+
+
+            var user = LoadInternalUser(Guid.Parse("63f31ca4-9fd3-4b08-a3ff-6ada9989b480"));
+            var userByIndex = LoadInternalUserByIndex("Michael Mc");
 
             //InsertEmployee();
 
@@ -33,6 +40,67 @@ namespace RavenDB.Console.App
             LoadUniqueConstraint();
             //QueryIndexByName();
             Console.ReadLine();
+        }
+
+        private static InternalUser[] LoadInternalUserByIndex(string queryString)
+        {
+            using (var session = _store.OpenSession())
+            {
+                var result = session.QueryUserIndex()
+                    .QueryMultipleWords(x => x.Query, queryString)
+                    .Where(x => x.UserType == UserTypeOption.Internal)
+                    .As<InternalUser>()
+                    .ToArray();
+
+                return result;
+            }
+        }
+
+        //public ActionResult SearchAllUsers(UserSearchModel model)
+        //{
+        //    if (string.IsNullOrWhiteSpace(model.Name))
+        //    {
+        //        throw new SimpleValidationException("Search criteria is mandatory.");
+        //    }
+
+        //    var internalResultsQuery =
+        //        RavenSession.QueryUserIndex()
+        //            .Customize(x => x.Include<InternalUser, LabelFamily>(i => i.LabelFamilyRef.Id))
+        //            .Where(x => x.UserType == UserTypeOption.Internal);
+
+        //    //Some admins are restricted to specific label families
+        //    var permittedLabelFamilyIds = GetPermittedImpersonationLabelFamilyIds();
+        //    if (permittedLabelFamilyIds.Any())
+        //    {
+        //        internalResultsQuery = internalResultsQuery.Where(x => x.LabelFamilyId.HasValue && x.LabelFamilyId.Value.In(permittedLabelFamilyIds));
+        //    }
+
+        //    var internalResults = internalResultsQuery
+        //        .QueryMultipleWords(x => x.Query, model.Name)
+        //        .OrderBy(x => x.DisplayName)
+        //        .As<InternalUser>()
+        //        .ToArray();
+
+        //    var externalResults =
+        //        RavenSession.QueryUserIndex()
+        //            .Customize(x => x.Include<ExternalUser, Contact>(i => i.ContactRef.Id))
+        //            .Where(x => x.UserType == UserTypeOption.External)
+        //            .QueryMultipleWords(x => x.Query, model.Name)
+        //            .OrderBy(x => x.DisplayName)
+        //            .As<ExternalUser>()
+        //            .ToArray();
+
+        //    return BuildAdminUserResources(internalResults, externalResults);
+        //}
+
+        private static InternalUser LoadInternalUser(Guid internalUserId)
+        {
+            using (var session = _store.OpenSession())
+            {
+                var result = session.Load<InternalUser>(internalUserId);
+
+                return result;
+            }
         }
 
         private static IEnumerable<Employee> LoadAllEmployees()
@@ -110,4 +178,5 @@ namespace RavenDB.Console.App
             Console.WriteLine("Created 10000 users");
         }
     }
+
 }

@@ -1,14 +1,13 @@
 ﻿using System;
 using Raven.Client;
 using Raven.Client.Document;
+using Raven.Client.UniqueConstraints;
 
 namespace CCTV.RavenDB
 {
-    using Raven.Client.UniqueConstraints;
-
     public static class DocumentStoreService
     {
-        private const string ConnectionString = "http://localhost:8079";
+        private const string ConnectionString = "http://rdb-dev.umusic.com";
 
         private static readonly Lazy<IDocumentStore> _store = new Lazy<IDocumentStore>(CreateStore);
 
@@ -19,7 +18,7 @@ namespace CCTV.RavenDB
             var store = new DocumentStore()
             {
                 Url = ConnectionString,
-                DefaultDatabase = "StudioHub"
+                DefaultDatabase = "UMGDemo"
             };
 
             store.RegisterListener(new UniqueConstraintsStoreListener());
